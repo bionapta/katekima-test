@@ -20,18 +20,18 @@ export const fetchBerryDetail = async (id: string) => {
   return response.data
 }
 
-export const addProduct = async (product: Product) => {
-  const response = await productApi.post<Product>('/products', product)
+export const addProduct = async (productData: any) => {
+  const response = await axios.post('https://fakestoreapi.com/products', productData)
   return response.data
 }
 
 export const fetchProduct = async (id: number) => {
-  const response = await productApi.get<Product>(`/products/${id}`)
+  const response = await axios.get(`https://fakestoreapi.com/products/${id}`)
   return response.data
 }
 
-export const updateProduct = async (id: number, product: Product) => {
-  const response = await productApi.put<Product>(`/products/${id}`, product)
+export const updateProduct = async (id: number, productData: any) => {
+  const response = await axios.put(`https://fakestoreapi.com/products/${id}`, productData)
   return response.data
 }
 

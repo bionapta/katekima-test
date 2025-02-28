@@ -288,7 +288,7 @@ const handleSubmit = async () => {
 
   loading.value = true
   try {
-    await productStore.updateProduct(route.params.id, form)
+    await productStore.editProduct(route.params.id, form)
     addToast('success', 'Product updated successfully')
     router.push('/berry-list')
   } catch (error) {
@@ -316,7 +316,7 @@ const removeToast = (id: number) => {
 const loadProduct = async () => {
   loading.value = true
   try {
-    const product = await productStore.getProductById(route.params.id)
+    const product = await productStore.getProduct(route.params.id)
     form.title = product.title
     form.price = product.price
     form.description = product.description

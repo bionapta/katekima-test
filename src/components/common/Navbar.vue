@@ -83,6 +83,7 @@ import { useUiStore } from '@/stores/ui'
 const { locale } = useI18n()
 const uiStore = useUiStore()
 const currentLocale = ref(uiStore.locale)
+const mobileMenuOpen = ref(false);
 
 const changeLocale = () => {
   locale.value = currentLocale.value

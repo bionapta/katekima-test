@@ -4,7 +4,9 @@ import type { Berry } from '@/types/berry'
 
 export const useBerryStore = defineStore('berry', () => {
   const berries = ref<Berry[]>([])
+  const berryDetail = ref<Berry | null>(null) // Tambahkan state untuk menyimpan detail berry
   const loading = ref(false)
+  const detailLoading = ref(false) // Tambahkan state untuk loading di halaman detail
   const searchQuery = ref('')
   const error = ref<string | null>(null)
 
@@ -15,37 +17,40 @@ export const useBerryStore = defineStore('berry', () => {
     return berries.value.filter((berry) => berry.name.toLowerCase().includes(query))
   })
 
-  // Actions
+  // Fetch semua berries
   const fetchBerries = async () => {
     loading.value = true
     error.value = null
     try {
       const response = await fetch('https://pokeapi.co/api/v2/berry/')
       const data = await response.json()
-      berries.value = data.results.sort((a: Berry, b: Berry) => a.name.localeCompare(b.name))
+      console.log("Berry Detail Data:", data);
+      berryDetail.value = data;
     } catch (err) {
       error.value = 'Failed to fetch berries'
       throw err
     } finally {
-      loading.value = false
+      detailLoading.value = false;
     }
   }
 
-  const getBerry = async (id: string) => {
-    loading.value = true
+  // Fetch detail berry berdasarkan ID
+  const fetchBerryById = async (id: string) => {
+    detailLoading.value = true
     error.value = null
     try {
       const response = await fetch(`https://pokeapi.co/api/v2/berry/${id}/`)
       const data = await response.json()
-      return data
+      berryDetail.value = data
     } catch (err) {
       error.value = 'Failed to fetch berry details'
       throw err
     } finally {
-      loading.value = false
+      detailLoading.value = false
     }
   }
 
+  // Hapus berry dari daftar
   const deleteBerry = async (name: string) => {
     berries.value = berries.value.filter((berry) => berry.name !== name)
   }
@@ -56,12 +61,14 @@ export const useBerryStore = defineStore('berry', () => {
 
   return {
     berries,
+    berryDetail, // Pastikan berryDetail tersedia di return
     loading,
+    detailLoading, // Pastikan detailLoading tersedia
     error,
     searchQuery,
     filteredBerries,
     fetchBerries,
-    getBerry,
+    fetchBerryById, // Pastikan fetchBerryById tersedia
     deleteBerry,
     setSearchQuery,
   }

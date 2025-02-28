@@ -36,26 +36,21 @@
         </div>
 
         <div class="space-y-2">
-          <div><span class="font-medium">Smoothness:</span> {{ berryDetail.smoothness }}</div>
-          <div><span class="font-medium">Soil Dryness:</span> {{ berryDetail.soil_dryness }}</div>
-          <div><span class="font-medium">Firmness:</span> {{ berryDetail.firmness.name }}</div>
-          <div>
-            <span class="font-medium">Natural Gift Type:</span>
-            {{ berryDetail.natural_gift_type.name }}
-          </div>
+          <div><span class="font-medium">Smoothness:</span> {{ berryDetail?.smoothness }}</div>
+          <div><span class="font-medium">Soil Dryness:</span> {{ berryDetail?.soil_dryness }}</div>
+          <div><span class="font-medium">Firmness:</span> {{ berryDetail?.firmness || "N/A" }}</div>
+          <div><span class="font-medium">Natural Gift Type:</span> {{ berryDetail?.natural_gift_type|| "N/A" }}</div>
         </div>
       </div>
 
       <div class="mt-6">
         <h3 class="font-bold mb-2">Flavors:</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-          <div
-            v-for="flavor in berryDetail.flavors"
-            :key="flavor.flavor.name"
-            class="p-2 bg-gray-100 rounded"
-          >
-            <span class="font-medium">{{ flavor.flavor.name }}:</span> {{ flavor.potency }}
-          </div>
+          <ul>
+  <li v-for="flavor in berryDetail?.flavors || []" :key="flavor.flavor.name">
+    {{ flavor.flavor.name }} - Potency: {{ flavor.potency }}
+  </li>
+</ul>
         </div>
       </div>
     </div>
@@ -83,21 +78,23 @@ const { berries, berryDetail, detailLoading, getBerryIdFromUrl } = berryStore
 
 onMounted(async () => {
   // Fetch all berries for the dropdown
-  if (berries.value.length === 0) {
-    await berryStore.fetchAllBerries()
+  if (!berries?.value || berries?.value.length === 0) 
+  {
+    await berryStore.fetchBerries();
+
   }
 
   // Check if we have a berry ID in the route
-  const berryId = route.params.id as string
+  const berryId = route.params.id as string;
   if (berryId) {
-    selectedBerryId.value = berryId
-    await berryStore.fetchBerryById(berryId)
+    selectedBerryId.value = berryId;
+    await berryStore.fetchBerryById(berryId);
   } else if (localStorage.getItem('selectedBerryId')) {
     // Restore from localStorage if available
-    selectedBerryId.value = localStorage.getItem('selectedBerryId')
-    await berryStore.fetchBerryById(selectedBerryId.value!)
+    selectedBerryId.value = localStorage.getItem('selectedBerryId');
+    await berryStore.fetchBerryById(selectedBerryId.value!);
   }
-})
+});
 
 watch(selectedBerryId, (newValue) => {
   if (newValue) {
